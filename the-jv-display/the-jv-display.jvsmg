@@ -1,0 +1,60 @@
+module TheJvDisplay
+{
+  event done
+  event idle_timeout
+  event image_data_available
+  event image_load_timeout
+  event image_loaded
+  command reset_timer
+  state STARTUP
+  {
+    on_entry debugLed.on image.loadDefault
+    on_do <nothing>
+    on_exit <nothing>
+    on_event done change_to DISPLAY_IMAGE
+  }
+  state DISPLAY_IMAGE
+  {
+    on_entry debugLed.off image.show
+    on_do <nothing>
+    on_exit <nothing>
+    on_event done change_to IDLE
+  }
+  state LOAD_IMAGE
+  {
+    on_entry image.load reset_timer
+    on_do <nothing>
+    on_exit <nothing>
+    on_event image_loaded change_to DISPLAY_IMAGE
+    on_event image_load_timeout change_to DISPLAY_IMAGE
+    on_event image_data_available change_to LOAD_IMAGE
+  }
+  state IDLE
+  {
+    on_entry reset_timer
+    on_do <nothing>
+    on_exit <nothing>
+    on_event image_data_available change_to START_LOADING_IMAGE
+    on_event idle_timeout change_to DISPLAY_IMAGE
+  }
+  state START_LOADING_IMAGE
+  {
+    on_entry image.startLoad debugLed.on
+    on_do <nothing>
+    on_exit <nothing>
+    on_event done change_to LOAD_IMAGE
+  }
+  start_state STARTUP
+}
+module debugLed
+{
+  command off
+  command on
+}
+module image
+{
+  command load
+  command loadDefault
+  command show
+  command startLoad
+}
