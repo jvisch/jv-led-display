@@ -8,16 +8,16 @@
 // --- Setup -----------
 
 void debugledSetup() {
-  // TODO: custom initialization
+  pinMode(LED_BUILTIN, OUTPUT);
 }        
 
 // --- Commands -----------
 
 void debugledOff() {
-  // TODO: implement command 'off'
+  digitalWrite(LED_BUILTIN, LOW);
 }
 
 void debugledOn() {
-  // TODO: implement command 'on'
+  digitalWrite(LED_BUILTIN, HIGH);
 }
 
