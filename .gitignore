@@ -1,3 +1,4 @@
 *.asta.lock
 .vscode/
 build/
+venv/
