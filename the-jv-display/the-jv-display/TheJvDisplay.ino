@@ -5,6 +5,19 @@
 
 // Module TheJvDisplay
 
+// Idle time out (refreshing the display in idle)
+#ifndef THEJVDISPLAY_IDLE_TIMEOUT
+#define THEJVDISPLAY_IDLE_TIMEOUT 1000
+#endif
+
+// Timeout waiting for loading an image from Serial
+#ifndef THEJVDISPLAY_IMAGE_LOAD_TIMEOUT
+#define THEJVDISPLAY_IMAGE_LOAD_TIMEOUT 1000
+#endif
+
+// Timer start time
+unsigned long long thejvdisplayTimerStart{0};
+
 // States
 const byte THEJVDISPLAY_STATE_START_LOADING_IMAGE{1};
 const byte THEJVDISPLAY_STATE_STARTUP{2};
@@ -14,172 +27,213 @@ const byte THEJVDISPLAY_STATE_IDLE{5};
 
 // Current state
 byte thejvdisplayState;
-byte thejvdisplayGetCurrentState() {
+byte thejvdisplayGetCurrentState()
+{
   return thejvdisplayState;
 }
 
 // --- Setup -----------
 
-void thejvdisplaySetup() {
+void thejvdisplaySetup()
+{
   // TODO: custom initialization
 
   // Start state
   thejvdisplayState = THEJVDISPLAY_STATE_STARTUP;
   thejvdisplaySTARTUPEntry();
-}        
+}
 
 // --- Commands -----------
 
-void thejvdisplayReset_timer() {
-  // TODO: implement command 'reset_timer'
+void thejvdisplayReset_timer()
+{
+  thejvdisplayTimerStart = millis();
 }
-
 
 // --- Events -----------
 
-bool thejvdisplayDone() {
-  // TODO: implement event 'done'
+bool thejvdisplayDone()
+{
+  return true;
 }
 
-bool thejvdisplayIdle_timeout() {
-  // TODO: implement event 'idle_timeout'
+bool thejvdisplayTimeout(const unsigned long long timeout_interval)
+{
+  auto timer_elapsed = millis() - thejvdisplayTimerStart;
+  return timer_elapsed >= timeout_interval;
 }
 
-bool thejvdisplayImage_data_available() {
-  // TODO: implement event 'image_data_available'
+bool thejvdisplayIdle_timeout()
+{
+  return thejvdisplayTimeout(THEJVDISPLAY_IDLE_TIMEOUT);
 }
 
-bool thejvdisplayImage_load_timeout() {
-  // TODO: implement event 'image_load_timeout'
+bool thejvdisplayImage_data_available()
+{
+  return (Serial.available() > 0);
 }
 
-bool thejvdisplayImage_loaded() {
-  // TODO: implement event 'image_loaded'
+bool thejvdisplayImage_load_timeout()
+{
+  return thejvdisplayTimeout(THEJVDISPLAY_IMAGE_LOAD_TIMEOUT);
+}
+
+bool thejvdisplayImage_loaded()
+{
+  return imageIsLoaded();
 }
 
 // --- Loop --------------------
-void thejvdisplayLoop() {
-  switch (thejvdisplayState) {
-    case THEJVDISPLAY_STATE_START_LOADING_IMAGE:
-      thejvdisplaySTART_LOADING_IMAGEDo();
-      if (thejvdisplayDone()) {
-        thejvdisplaySTART_LOADING_IMAGEExit();
-        thejvdisplayState = THEJVDISPLAY_STATE_LOAD_IMAGE;
-        thejvdisplayLOAD_IMAGEEntry();
-      }
-      break;
-    case THEJVDISPLAY_STATE_STARTUP:
-      thejvdisplaySTARTUPDo();
-      if (thejvdisplayDone()) {
-        thejvdisplaySTARTUPExit();
-        thejvdisplayState = THEJVDISPLAY_STATE_DISPLAY_IMAGE;
-        thejvdisplayDISPLAY_IMAGEEntry();
-      }
-      break;
-    case THEJVDISPLAY_STATE_DISPLAY_IMAGE:
-      thejvdisplayDISPLAY_IMAGEDo();
-      if (thejvdisplayDone()) {
-        thejvdisplayDISPLAY_IMAGEExit();
-        thejvdisplayState = THEJVDISPLAY_STATE_IDLE;
-        thejvdisplayIDLEEntry();
-      }
-      break;
-    case THEJVDISPLAY_STATE_LOAD_IMAGE:
-      thejvdisplayLOAD_IMAGEDo();
-      if (thejvdisplayImage_loaded()) {
-        thejvdisplayLOAD_IMAGEExit();
-        thejvdisplayState = THEJVDISPLAY_STATE_DISPLAY_IMAGE;
-        thejvdisplayDISPLAY_IMAGEEntry();
-      } else if (thejvdisplayImage_load_timeout()) {
-        thejvdisplayLOAD_IMAGEExit();
-        thejvdisplayState = THEJVDISPLAY_STATE_DISPLAY_IMAGE;
-        thejvdisplayDISPLAY_IMAGEEntry();
-      } else if (thejvdisplayImage_data_available()) {
-        thejvdisplayLOAD_IMAGEExit();
-        thejvdisplayState = THEJVDISPLAY_STATE_LOAD_IMAGE;
-        thejvdisplayLOAD_IMAGEEntry();
-      }
-      break;
-    case THEJVDISPLAY_STATE_IDLE:
-      thejvdisplayIDLEDo();
-      if (thejvdisplayImage_data_available()) {
-        thejvdisplayIDLEExit();
-        thejvdisplayState = THEJVDISPLAY_STATE_START_LOADING_IMAGE;
-        thejvdisplaySTART_LOADING_IMAGEEntry();
-      } else if (thejvdisplayIdle_timeout()) {
-        thejvdisplayIDLEExit();
-        thejvdisplayState = THEJVDISPLAY_STATE_DISPLAY_IMAGE;
-        thejvdisplayDISPLAY_IMAGEEntry();
-      }
-      break;
+void thejvdisplayLoop()
+{
+  switch (thejvdisplayState)
+  {
+  case THEJVDISPLAY_STATE_START_LOADING_IMAGE:
+    thejvdisplaySTART_LOADING_IMAGEDo();
+    if (thejvdisplayDone())
+    {
+      thejvdisplaySTART_LOADING_IMAGEExit();
+      thejvdisplayState = THEJVDISPLAY_STATE_LOAD_IMAGE;
+      thejvdisplayLOAD_IMAGEEntry();
+    }
+    break;
+  case THEJVDISPLAY_STATE_STARTUP:
+    thejvdisplaySTARTUPDo();
+    if (thejvdisplayDone())
+    {
+      thejvdisplaySTARTUPExit();
+      thejvdisplayState = THEJVDISPLAY_STATE_DISPLAY_IMAGE;
+      thejvdisplayDISPLAY_IMAGEEntry();
+    }
+    break;
+  case THEJVDISPLAY_STATE_DISPLAY_IMAGE:
+    thejvdisplayDISPLAY_IMAGEDo();
+    if (thejvdisplayDone())
+    {
+      thejvdisplayDISPLAY_IMAGEExit();
+      thejvdisplayState = THEJVDISPLAY_STATE_IDLE;
+      thejvdisplayIDLEEntry();
+    }
+    break;
+  case THEJVDISPLAY_STATE_LOAD_IMAGE:
+    thejvdisplayLOAD_IMAGEDo();
+    if (thejvdisplayImage_loaded())
+    {
+      thejvdisplayLOAD_IMAGEExit();
+      thejvdisplayState = THEJVDISPLAY_STATE_DISPLAY_IMAGE;
+      thejvdisplayDISPLAY_IMAGEEntry();
+    }
+    else if (thejvdisplayImage_load_timeout())
+    {
+      thejvdisplayLOAD_IMAGEExit();
+      thejvdisplayState = THEJVDISPLAY_STATE_DISPLAY_IMAGE;
+      thejvdisplayDISPLAY_IMAGEEntry();
+    }
+    else if (thejvdisplayImage_data_available())
+    {
+      thejvdisplayLOAD_IMAGEExit();
+      thejvdisplayState = THEJVDISPLAY_STATE_LOAD_IMAGE;
+      thejvdisplayLOAD_IMAGEEntry();
+    }
+    break;
+  case THEJVDISPLAY_STATE_IDLE:
+    thejvdisplayIDLEDo();
+    if (thejvdisplayImage_data_available())
+    {
+      thejvdisplayIDLEExit();
+      thejvdisplayState = THEJVDISPLAY_STATE_START_LOADING_IMAGE;
+      thejvdisplaySTART_LOADING_IMAGEEntry();
+    }
+    else if (thejvdisplayIdle_timeout())
+    {
+      thejvdisplayIDLEExit();
+      thejvdisplayState = THEJVDISPLAY_STATE_DISPLAY_IMAGE;
+      thejvdisplayDISPLAY_IMAGEEntry();
+    }
+    break;
   }
 }
 
 // --- THEJVDISPLAY_STATE_START_LOADING_IMAGE -----------
-void thejvdisplaySTART_LOADING_IMAGEEntry() {
+void thejvdisplaySTART_LOADING_IMAGEEntry()
+{
   imageStartLoad();
   debugledOn();
 }
 
-void thejvdisplaySTART_LOADING_IMAGEDo() {
+void thejvdisplaySTART_LOADING_IMAGEDo()
+{
   // <nothing>
 }
 
-void thejvdisplaySTART_LOADING_IMAGEExit() {
+void thejvdisplaySTART_LOADING_IMAGEExit()
+{
   // <nothing>
 }
 
 // --- THEJVDISPLAY_STATE_STARTUP -----------
-void thejvdisplaySTARTUPEntry() {
+void thejvdisplaySTARTUPEntry()
+{
   debugledOn();
   imageLoadDefault();
 }
 
-void thejvdisplaySTARTUPDo() {
+void thejvdisplaySTARTUPDo()
+{
   // <nothing>
 }
 
-void thejvdisplaySTARTUPExit() {
+void thejvdisplaySTARTUPExit()
+{
   // <nothing>
 }
 
 // --- THEJVDISPLAY_STATE_DISPLAY_IMAGE -----------
-void thejvdisplayDISPLAY_IMAGEEntry() {
+void thejvdisplayDISPLAY_IMAGEEntry()
+{
   debugledOff();
   imageShow();
 }
 
-void thejvdisplayDISPLAY_IMAGEDo() {
+void thejvdisplayDISPLAY_IMAGEDo()
+{
   // <nothing>
 }
 
-void thejvdisplayDISPLAY_IMAGEExit() {
+void thejvdisplayDISPLAY_IMAGEExit()
+{
   // <nothing>
 }
 
-// --- THEJVDISPLAY_STATE_LOAD_IMAGE -----------
-void thejvdisplayLOAD_IMAGEEntry() {
+// --- THEJVDISPLAY_STATE_LOAD_IMAGE -----------Í
+void thejvdisplayLOAD_IMAGEEntry()
+{
   imageLoad();
   thejvdisplayReset_timer();
 }
 
-void thejvdisplayLOAD_IMAGEDo() {
+void thejvdisplayLOAD_IMAGEDo()
+{
   // <nothing>
 }
 
-void thejvdisplayLOAD_IMAGEExit() {
+void thejvdisplayLOAD_IMAGEExit()
+{
   // <nothing>
 }
 
 // --- THEJVDISPLAY_STATE_IDLE -----------
-void thejvdisplayIDLEEntry() {
+void thejvdisplayIDLEEntry()
+{
   thejvdisplayReset_timer();
 }
 
-void thejvdisplayIDLEDo() {
+void thejvdisplayIDLEDo()
+{
   // <nothing>
 }
 
-void thejvdisplayIDLEExit() {
+void thejvdisplayIDLEExit()
+{
   // <nothing>
 }

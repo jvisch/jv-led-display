@@ -27,8 +27,7 @@
 const uint8_t imageBrightness{10};
 
 // the leds
-
-image_size_t imageCurrentIndex{0};
+uint8_t imageCurrentIndex{0};
 CRGB imageLeds[IMAGE_NUM_LEDS];
 
 // --- Setup -----------
@@ -44,20 +43,28 @@ void imageStartLoad()
   imageCurrentIndex = 0;
 }
 
-image_size_t imageLoad()
+bool imageIsLoaded() {
+  return imageCurrentIndex == 255;
+}
+
+uint8_t imageLoad()
 {
-  image_size_t bytes_read{0};
+  uint8_t bytes_read{0};
   while(Serial.available() > 3 && imageCurrentIndex < IMAGE_NUM_LEDS) {
-    auto pixel = &(imageLeds[imageCurrentIndex]);
-    bytes_read += Serial.readBytes(pixel, 3);
+    CRGB& pixel = imageLeds[imageCurrentIndex];
+    bytes_read += Serial.readBytes(pixel.raw, 3);
+
     ++imageCurrentIndex;
   }
-  return 10;
+  return bytes_read;
 }
 
 void imageLoadDefault()
 {
   // TODO: implement command 'loadDefault'
+  for(auto& led : imageLeds) {
+    led = CRGB::HotPink;
+  }
 }
 
 void imageShow()
