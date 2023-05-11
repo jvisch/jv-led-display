@@ -43,26 +43,35 @@ void imageStartLoad()
   imageCurrentIndex = 0;
 }
 
-bool imageIsLoaded() {
+bool imageIsLoaded()
+{
   return imageCurrentIndex == 255;
+}
+
+bool imageIsPixelAvailableOnSerial()
+{
+  return Serial.available() >= 3;
 }
 
 uint8_t imageLoad()
 {
   uint8_t bytes_read{0};
-  while(Serial.available() > 3 && imageCurrentIndex < IMAGE_NUM_LEDS) {
-    CRGB& pixel = imageLeds[imageCurrentIndex];
+  while (imageIsPixelAvailableOnSerial() && (imageCurrentIndex < IMAGE_NUM_LEDS))
+  {
+    CRGB &pixel = imageLeds[imageCurrentIndex];
     bytes_read += Serial.readBytes(pixel.raw, 3);
 
     ++imageCurrentIndex;
   }
+
   return bytes_read;
 }
 
 void imageLoadDefault()
 {
   // TODO: implement command 'loadDefault'
-  for(auto& led : imageLeds) {
+  for (auto &led : imageLeds)
+  {
     led = CRGB::HotPink;
   }
 }
@@ -71,5 +80,3 @@ void imageShow()
 {
   FastLED.show(imageBrightness);
 }
-
-

@@ -70,7 +70,7 @@ bool thejvdisplayIdle_timeout()
 
 bool thejvdisplayImage_data_available()
 {
-  return (Serial.available() > 0);
+  return imageIsPixelAvailableOnSerial();
 }
 
 bool thejvdisplayImage_load_timeout()
