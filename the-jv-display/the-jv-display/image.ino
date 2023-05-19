@@ -23,11 +23,13 @@
 #define IMAGE_RGB_ORDER GRB
 #endif
 
+const byte PIXEL_SIZE = 3;
+
 // Brightness (do not make it to bright, otherwise the led matrix can be damaged)
 const uint8_t imageBrightness{10};
 
 // the leds
-uint8_t imageCurrentIndex{0};
+unsigned int imageCurrentIndex{0};
 CRGB imageLeds[IMAGE_NUM_LEDS];
 
 // --- Setup -----------
@@ -45,26 +47,22 @@ void imageStartLoad()
 
 bool imageIsLoaded()
 {
-  return imageCurrentIndex == 255;
+  return imageCurrentIndex > 255;
 }
 
 bool imageIsPixelAvailableOnSerial()
 {
-  return Serial.available() >= 3;
+  return Serial.available() >= PIXEL_SIZE;
 }
 
-uint8_t imageLoad()
+void imageLoad()
 {
-  uint8_t bytes_read{0};
   while (imageIsPixelAvailableOnSerial() && (imageCurrentIndex < IMAGE_NUM_LEDS))
   {
     CRGB &pixel = imageLeds[imageCurrentIndex];
-    bytes_read += Serial.readBytes(pixel.raw, 3);
-
+    Serial.readBytes(pixel.raw, PIXEL_SIZE); // ignore return value
     ++imageCurrentIndex;
   }
-
-  return bytes_read;
 }
 
 void imageLoadDefault()
