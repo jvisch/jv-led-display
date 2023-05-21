@@ -17,6 +17,10 @@ class Display:
             raise ValueError('Color must contain exactly 3 values (rgb)')
         self.__pixels = tuple(Pixel(*color) for _ in range(self.count))
 
+    def __str__(self) -> str:
+        rows_as_strings = ', '.join(map(str, self.rows))
+        return f'[{rows_as_strings}]'
+
     @property
     def pixels(self):
         return self.__pixels
@@ -70,7 +74,8 @@ class Row:
         self.__pixels = display.pixels[start: end]
 
     def __str__(self) -> str:
-        return ' '.join(map(str, self.__pixels))
+        pixels_as_string = ', '.join(map(str, self.__pixels))
+        return f'[{pixels_as_string}]'
 
     def __getitem__(self, index):
         return self.pixels[index]
@@ -81,11 +86,11 @@ class Row:
     @property
     def pixels(self):
         return self.__pixels
-    
+
     @property
     def count(self):
         return len(self.pixels)
-    
+
     def __len__(self):
         return self.count
 
