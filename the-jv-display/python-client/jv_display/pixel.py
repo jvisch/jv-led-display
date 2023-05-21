@@ -1,42 +1,34 @@
+
 class Pixel:
-    def __init__(self, red, green, blue) -> None:
-        self.red = red
-        self.green = green
-        self.blue = blue
+    def __init__(self, *args) -> None:
+        self.__rgb = bytearray(args)
 
     def __str__(self) -> str:
         return f'{self.red:02X}{self.green:02X}{self.blue:02X}'
 
-    def __check_value_and_raise_exception(value):
-        if value < 0 or value > 255:
-            raise ValueError('Value must be between 0 and 255')
-
     @property
     def red(self):
-        return self._r
+        return self.__rgb[0]
 
     @red.setter
     def red(self, value):
-        Pixel.__check_value_and_raise_exception(value)
-        self._r = value
+        self.__rgb[0] = value
 
     @property
     def green(self):
-        return self._g
+        return self.__rgb[1]
 
     @green.setter
     def green(self, value):
-        Pixel.__check_value_and_raise_exception(value)
-        self._g = value
+        self.__rgb[1] = value
 
     @property
     def blue(self):
-        return self._b
+        return self.__rgb[2]
 
     @blue.setter
     def blue(self, value):
-        Pixel.__check_value_and_raise_exception(value)
-        self._b = value
+        self.__rgb[2] = value
 
     def __lshift__(self, pixel):
         self.red = pixel.red
