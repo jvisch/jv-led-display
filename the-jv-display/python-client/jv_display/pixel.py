@@ -4,7 +4,7 @@ class Pixel:
         self.__rgb = bytearray(args)
 
     def __str__(self) -> str:
-        return f'{self.red:02X}{self.green:02X}{self.blue:02X}'
+        return self.__rgb.hex()
 
     @property
     def red(self):
@@ -31,6 +31,4 @@ class Pixel:
         self.__rgb[2] = value
 
     def __lshift__(self, pixel):
-        self.red = pixel.red
-        self.green = pixel.green
-        self.blue = pixel.blue
+        self.__rgb = pixel.__rgb
