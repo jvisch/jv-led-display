@@ -49,9 +49,6 @@ class Display:
     def __len__(self):
         return self.count
 
-    def __str__(self) -> str:
-        pass
-
     @property
     def row_count(self):
         return self.__nr_of_rows
@@ -59,7 +56,7 @@ class Display:
     @property
     def column_count(self):
         return self.__nr_of_cols
-    
+
     @property
     def rows(self):
         for row_index in range(self.row_count):
@@ -70,11 +67,11 @@ class Row:
     def __init__(self, row_index, display: Display):
         start = display.index(0, row_index)
         end = start + display.column_count
-        self.__pixels = display.pixels[start : end]
+        self.__pixels = display.pixels[start: end]
 
     def __str__(self) -> str:
         return ' '.join(map(str, self.__pixels))
-    
+
     def __getitem__(self, index):
         return self.pixels[index]
 
@@ -84,3 +81,20 @@ class Row:
     @property
     def pixels(self):
         return self.__pixels
+    
+    @property
+    def count(self):
+        return len(self.pixels)
+    
+    def __len__(self):
+        return self.count
+
+    def __lshift__(self, value):
+        if isinstance(value, Pixel):
+            for p in self.pixels:
+                p << value
+        else:
+            if not len(value) == len(self):
+                raise ValueError('value length not equal to row length')
+            for i in range(len(self)):
+                self.pixels[i] << value[i]
