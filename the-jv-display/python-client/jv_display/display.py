@@ -18,10 +18,14 @@ class Display:
         self.__pixels = tuple(Pixel(*color) for _ in range(self.count))
 
     @property
+    def pixels(self):
+        return self.__pixels
+
+    @property
     def count(self):
         return self.row_count * self.column_count
 
-    def __real_index(self, x, y):
+    def index(self, x, y):
         # just like a python list indexer
         if x < 0:
             x = self.column_count + x
@@ -35,12 +39,12 @@ class Display:
         return (y * self.row_count) + x
 
     def __getitem__(self, index):
-        array_index = self.__real_index(*index)
-        return self.__pixels[array_index]
+        array_index = self.index(*index)
+        return self.pixels[array_index]
 
     def __setitem__(self, index, pixel):
-        array_index = self.__real_index(*index)
-        self.__pixels[array_index] << pixel
+        array_index = self.index(*index)
+        self.pixels[array_index] << pixel
 
     def __len__(self):
         return self.count
@@ -55,3 +59,28 @@ class Display:
     @property
     def column_count(self):
         return self.__nr_of_cols
+    
+    @property
+    def rows(self):
+        for row_index in range(self.row_count):
+            yield Row(row_index, self)
+
+
+class Row:
+    def __init__(self, row_index, display: Display):
+        start = display.index(0, row_index)
+        end = start + display.column_count
+        self.__pixels = display.pixels[start : end]
+
+    def __str__(self) -> str:
+        return ' '.join(map(str, self.__pixels))
+    
+    def __getitem__(self, index):
+        return self.pixels[index]
+
+    def __setitem__(self, index, pixel):
+        self.__pixels[index] << pixel
+
+    @property
+    def pixels(self):
+        return self.__pixels
