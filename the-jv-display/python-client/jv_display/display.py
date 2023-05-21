@@ -15,11 +15,12 @@ class Display:
         # Pixels
         if len(color) != 3:
             raise ValueError('Color must contain exactly 3 values (rgb)')
-        self.__pixels = tuple(Pixel(*color) for _ in range(self.__real_size()))
+        self.__pixels = tuple(Pixel(*color) for _ in range(self.count))
 
-    def __real_size(self):
+    @property
+    def count(self):
         return self.row_count * self.column_count
-    
+
     def __real_index(self, x, y):
         # just like a python list indexer
         if x < 0:
@@ -28,7 +29,7 @@ class Display:
             raise IndexError(f'x out of range)')
         if y < 0:
             y = self.row_count + y
-        if y < 0 or y >= self.row_count:
+        if y >= self.row_count:
             raise IndexError(f'y out of range)')
         # calculate index in the pixels array
         return (y * self.row_count) + x
@@ -36,19 +37,17 @@ class Display:
     def __getitem__(self, index):
         array_index = self.__real_index(*index)
         return self.__pixels[array_index]
-    
+
     def __setitem__(self, index, pixel):
         array_index = self.__real_index(*index)
-        p = self.__pixels[array_index]
-        # p.red = pixel.red
-        # p.green = pixel.green
-        # p.blue = pixel.blue
-        p << pixel
+        self.__pixels[array_index] << pixel
 
-    
+    def __len__(self):
+        return self.count
+
     def __str__(self) -> str:
         pass
-    
+
     @property
     def row_count(self):
         return self.__nr_of_rows
@@ -56,4 +55,3 @@ class Display:
     @property
     def column_count(self):
         return self.__nr_of_cols
-
