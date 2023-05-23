@@ -15,30 +15,35 @@ class Pixel:
 
     def __iter__(self):
         return iter(self.__rgb)
+    
+    def __getitem__(self, index):
+        if index < 0 or index >= len(self):
+            raise IndexError('rgb index out of range')
+        return self.__rgb[index]
 
     @property
     def red(self):
-        return self.__rgb[0]
+        return self[0]
 
     @red.setter
     def red(self, value):
-        self.__rgb[0] = value
+        self[0] = value
 
     @property
     def green(self):
-        return self.__rgb[1]
+        return self[1]
 
     @green.setter
     def green(self, value):
-        self.__rgb[1] = value
+        self[1] = value
 
     @property
     def blue(self):
-        return self.__rgb[2]
+        return self[2]
 
     @blue.setter
     def blue(self, value):
-        self.__rgb[2] = value
+        self[2] = value
 
     def __lshift__(self, color):
         # check input
