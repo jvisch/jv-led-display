@@ -66,12 +66,16 @@ class Display:
         for row_index in range(self.row_count):
             yield Row(row_index, self)
 
+    @property
+    def columns(self):
+        for column_index in range(self.column_count):
+            yield Column(column_index, self)
 
-class Row:
-    def __init__(self, row_index, display: Display):
-        start = display.index(0, row_index)
-        end = start + display.column_count
-        self.__pixels = display.pixels[start: end]
+
+class DisplayPart:
+
+    def __init__(self, pixels) -> None:
+        self.__pixels = pixels
 
     def __str__(self) -> str:
         pixels_as_string = ', '.join(map(str, self.__pixels))
@@ -103,3 +107,21 @@ class Row:
                 raise ValueError('value length not equal to row length')
             for i in range(len(self)):
                 self.pixels[i] << value[i]
+
+
+class Row(DisplayPart):
+
+    def __init__(self, row_index, display: Display):
+        start = display.index(0, row_index)
+        end = start + display.column_count
+        pixels = display.pixels[start: end]
+        super().__init__(pixels)
+
+
+class Column(DisplayPart):
+
+    def __init__(self, column_index, display: Display):
+        start = column_index
+        step = display.column_count
+        pixels = display.pixels[start:: step]
+        super().__init__(pixels)
