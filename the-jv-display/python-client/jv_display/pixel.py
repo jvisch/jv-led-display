@@ -1,13 +1,20 @@
 
 class Pixel:
-    def __init__(self, red, green, blue) -> None:
-        self << (red, green, blue)
+
+    def __init__(self, *args) -> None:
+        if len(args) == 1:
+            self << args[0]
+        else:
+            self << args
 
     def __str__(self) -> str:
         return self.__rgb.hex()
 
     def __len__(self):
         return 3
+
+    def __iter__(self):
+        return iter(self.__rgb)
 
     @property
     def red(self):
@@ -34,12 +41,12 @@ class Pixel:
         self.__rgb[2] = value
 
     def __lshift__(self, color):
-        if isinstance(color, Pixel):
-            rgb = color.__rgb.copy()
-        elif isinstance(color, int):
+        # check input
+        if isinstance(color, int):
             rgb = bytearray(color.to_bytes(3))
         else:
             rgb = bytearray(color)
+        # check bytearray length
         if len(rgb) != len(self):
             raise ValueError('Invalid argument')
         self.__rgb = rgb
