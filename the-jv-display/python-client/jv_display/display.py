@@ -52,6 +52,17 @@ class Display:
 
     def __len__(self):
         return self.count
+    
+    def __lshift__(self, value):
+        for p in self.__pixels:
+            p << value
+
+    def __bytes__(self):
+        return bytes(self.raw_bytes)
+
+    @property
+    def raw_bytes(self):
+        return (b for pixel in self.pixels for b in pixel)
 
     @property
     def row_count(self):
