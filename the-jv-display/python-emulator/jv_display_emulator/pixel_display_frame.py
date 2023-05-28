@@ -26,10 +26,6 @@ class PixelDisplayFrame(tkinter.Frame):
         pixel_width = width / pixel_column_count
         pixel_height = width / pixel_row_count
         
-        # def rgb(value):
-        #     r, g, b = value.to_bytes(3)
-        #     return f'#{r:02x}{g:02x}{b:02x}'
-
         rows = []
         for r in range(pixel_row_count):
             py1 = r * pixel_height
@@ -42,11 +38,11 @@ class PixelDisplayFrame(tkinter.Frame):
                 row.append(p)
             rows.append(row)
 
+        # display pixels as wired on fysical mtarix
         for row in rows[1::2]:
             row.reverse()
 
         self.__pixels = [p for row in rows for p in row]
-        # self.canvas.itemconfig(rows[-1], fill='green')
 
     def write(self, data):
         def rgb(r, g, b):
