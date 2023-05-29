@@ -74,6 +74,6 @@ class PixelDisplayFrame(tkinter.Frame):
             with conn:
                 print(f"Connected by {addr}")
                 while True:
-                    data = conn.recv(255)
+                    data = conn.recv(16*16*3)
                     if data:
                         self.write(data)
