@@ -1,7 +1,12 @@
 import tkinter 
+import socket
+import threading
 
 class PixelDisplayFrame(tkinter.Frame):
     
+    HOST = 'localhost'
+    PORT = 65432
+
     def __init__(self, *args, **kwargs):
         # Display settings
         pixel_color = kwargs.pop('pixel_color', '#666666')
@@ -44,12 +49,30 @@ class PixelDisplayFrame(tkinter.Frame):
 
         self.__pixels = [p for row in rows for p in row]
 
+        # Create socket to receive pixel data
+        self.socket_thread = threading.Thread(target=self.handle_socket)
+        self.socket_thread.start()
+
     def write(self, data):
         def rgb(r, g, b):
             return f'#{r:02x}{g:02x}{b:02x}'
         bytes_data = bytes(data)
         for i in range(0, len(bytes_data), 3):
-            r, g, b = bytes_data[i:i+3]
-            color = rgb(r,g,b)
-            pixel = self.__pixels[i//3]
-            self.canvas.itemconfig(pixel, fill=color)
+            bd = bytes_data[i:i+3]
+            if len(bd) == 3:
+                r, g, b = bytes_data[i:i+3]
+                color = rgb(r,g,b)
+                pixel = self.__pixels[i//3]
+                self.canvas.itemconfig(pixel, fill=color)
+
+    def handle_socket(self):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.bind((PixelDisplayFrame.HOST, PixelDisplayFrame.PORT))
+            s.listen()
+            conn, addr = s.accept()
+            with conn:
+                print(f"Connected by {addr}")
+                while True:
+                    data = conn.recv(255)
+                    if data:
+                        self.write(data)
