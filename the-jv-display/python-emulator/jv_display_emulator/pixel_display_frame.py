@@ -51,6 +51,7 @@ class PixelDisplayFrame(tkinter.Frame):
 
         # Create socket to receive pixel data
         self.socket_thread = threading.Thread(target=self.handle_socket)
+        self.socket_thread.daemon = True
         self.socket_thread.start()
 
     def write(self, data):
