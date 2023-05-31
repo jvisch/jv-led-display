@@ -110,7 +110,7 @@ class DisplayPart:
         return self.count
 
     def __lshift__(self, value):
-        if isinstance(value, Pixel):
+        if isinstance(value, Pixel | int):
             for p in self.pixels:
                 p << value
         else:
