@@ -1,5 +1,5 @@
-from jv_display.pixel import Pixel
-from jv_display.display import Display
+from jv_display.display.pixel import Pixel
+from jv_display.display.display import Display
 
 import serial
 import time

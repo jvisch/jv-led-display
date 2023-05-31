@@ -1,10 +1,10 @@
 import socket
-import jv_display.display
+import jv_display.display.display
 import jv_display.emulator.run
 
 jv_display.emulator.run.run()
 
-d = jv_display.display.Display()
+d = jv_display.display.display.Display()
 d << 0xff0000
 
 HOST = 'localhost'    # The remote host
