@@ -2,9 +2,10 @@ import socket
 import time
 
 
-from jv_display import Display, show_emulator
+from jv_display.display.display import Display
+from jv_display.emulator.run import run
 
-show_emulator()
+run()
 time.sleep(2.1)
 
 d = Display()
