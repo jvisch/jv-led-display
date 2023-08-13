@@ -5,14 +5,15 @@ import time
 from jv_display.display.display import Display
 from jv_display.emulator.run import run
 
-run()
+HOST = 'localhost' # The remote host
+PORT = 11111       # The same port as used by the server
+
+run(HOST, PORT)
 time.sleep(2.1)
 
 d = Display()
 d << 0xff0000
 
-HOST = 'localhost'    # The remote host
-PORT = 65432            # The same port as used by the server
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
     b = bytes(d)
@@ -20,9 +21,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.sendall(b)
     time.sleep(1)
 
-    for i in range(1):
-        # print(i)
-
+    for i in range(10):
         d << 0x000000
         d[0,i] << 0x00FF00
         s.sendall(bytes(d))
