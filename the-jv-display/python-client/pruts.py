@@ -1,13 +1,11 @@
-from jv_display.emulator import run
-from jv_display.display.display import Display
 import socket
-
-run.run()
-
-
 import time
-time.sleep(10)
-print('done')
+
+
+from jv_display import Display, show_emulator
+
+show_emulator()
+time.sleep(2.1)
 
 d = Display()
 d << 0xff0000
@@ -19,19 +17,35 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     b = bytes(d)
     print(len(b))
     s.sendall(b)
-    import time
-    time.sleep(5)
+    time.sleep(1)
 
-    while True:
+    for i in range(1):
+        # print(i)
+
         d << 0x000000
+        d[0,i] << 0x00FF00
         s.sendall(bytes(d))
+
         d << 0x0000ff
+        d[0,i] << 0x00FF00
         s.sendall(bytes(d))
+
         d << 0x00ff00
+        d[0,i] << 0x00FF00
         s.sendall(bytes(d))
+
         d << 0xff0000
+        d[0,i] << 0x00FF00
         s.sendall(bytes(d))
+
         d << 0xffff00
+        d[0,i] << 0x00FF00
         s.sendall(bytes(d))
+
         d << 0xffffff
-        s.sendall(bytes(d))
+        d[0,i] << 0x00FF00
+        s.sendall(bytes(d)[:-2])
+
+        print(f'sleep {i}')
+        time.sleep(10)
+        # print(i)
