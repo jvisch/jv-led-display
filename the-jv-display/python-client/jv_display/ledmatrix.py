@@ -5,6 +5,7 @@ import socket
 from .emulator import run as emulator_run
 from .display import display
 
+
 class led_matrix():
 
     def __init__(self, com_port=None, debug_connection=None) -> None:
@@ -12,10 +13,12 @@ class led_matrix():
             raise ValueError(
                 "Either 'com_port' of 'debug_connecton' must be set.")
         # connection to Arduino matrix
+        self.serial_port = None
         if com_port:
             self.serial_port = None
             raise NotImplementedError("todo")
         # connection to TKinter debug form
+        self.socket = None
         if debug_connection:
             host, port = debug_connection
             emulator_run.run(host, port)
@@ -31,7 +34,7 @@ class led_matrix():
         # TKinter form
         if self.socket:
             self.socket.sendall(byte_data)
-
+            time.sleep(1)
 
     def close(self):
         if self.serial_port:

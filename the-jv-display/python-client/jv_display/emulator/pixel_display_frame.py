@@ -79,8 +79,7 @@ class PixelDisplayFrame(tkinter.Frame):
                 data = conn.recv(len(self.__pixels) * 3)
                 while len(data):
                     print(f'got data {len(data)}')
-                    data = conn.recv(len(self.__pixels) * 3)
                     self.write(data)
                     self.update()
-                    import time
-                    time.sleep(0.2)
+                    data = conn.recv(len(self.__pixels) * 3)
+
