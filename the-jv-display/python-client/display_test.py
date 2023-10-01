@@ -1,10 +1,7 @@
 import jv_display.ledmatrix
 from jv_display.display.display import Display, Pixel
 
-
-import time
-
-matrix = jv_display.ledmatrix.led_matrix(debug_connection=('localhost', 44444))
+matrix = jv_display.ledmatrix.led_matrix(com_port="com3", debug_connection=('localhost', 44444))
 display = Display()
 
 

@@ -5,6 +5,8 @@ import socket
 from .emulator import run as emulator_run
 from .display import display
 
+SLEEPY = .015
+BAUDRATE = 115200
 
 class led_matrix():
 
@@ -15,29 +17,32 @@ class led_matrix():
         # connection to Arduino matrix
         self.serial_port = None
         if com_port:
-            self.serial_port = None
-            raise NotImplementedError("todo")
+            import serial
+            self.serial_port = serial.Serial(com_port, BAUDRATE)
         # connection to TKinter debug form
         self.socket = None
         if debug_connection:
             host, port = debug_connection
             emulator_run.run(host, port)
-            time.sleep(2.1)
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.connect(debug_connection)
+        # give ports time to initialize. Value experimental determined
+        time.sleep(2.1)
+        
 
     def show(self, display: display.Display):
         byte_data = bytes(display)
         # Arduino matrix
         if self.serial_port:
-            raise NotImplementedError("todo")
+            self.serial_port.write(byte_data)
         # TKinter form
         if self.socket:
             self.socket.sendall(byte_data)
-            time.sleep(1)
+        # Let system process the data
+        time.sleep(SLEEPY)
 
     def close(self):
         if self.serial_port:
-            raise NotImplementedError("todo")
+            self.serial_port.close()
         if self.socket:
             self.socket.close()

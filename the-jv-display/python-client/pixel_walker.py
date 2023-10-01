@@ -1,31 +1,22 @@
-from jv_display.display.pixel import Pixel
-from jv_display.display.display import Display
+import jv_display.ledmatrix
+from jv_display.display.display import Display, Pixel
 
-import serial
-import time
+COM_PORT = 'com3'
+DEBUG_HOST = 'localhost'
+DEBUG_PORT = 44444
 
-COM = "com4"
-BAUDRATE = 115200
-SLEEPY = .015
+BLACK = [0x00, 0x00, 0x00]
+RED = [0xFF, 0x00, 0x00]
+GREEN = [0x00, 0xFF, 0x00]
+BLEU = [0x00, 0x00, 0xFF]
 
-with serial.Serial(COM, BAUDRATE) as s:
-    time.sleep(2)
-    d = Display()
+YELLOW = [0xFF, 0xFF, 0x00]
+PURPLE = [0x00, 0xFF, 0xFF]
 
-    def show_display():
-        s.write(d.raw_bytes)
-        time.sleep(SLEEPY)
+matrix = jv_display.ledmatrix.led_matrix(com_port=COM_PORT, debug_connection=(DEBUG_HOST, DEBUG_PORT))
+display = Display()
 
-    prev = Pixel(0,0,0)
-    for p in d.pixels:
-        prev << 0
-        p << 0xff0000
-        show_display()
-        prev = p
-    
-    for p in reversed(d.pixels):
-        prev << 0
-        p << 0xff0000
-        show_display()
-        prev = p
-    
+for y in range(display.column_count):
+    for x in range(display.row_count):
+        display[x,y] = GREEN
+        matrix.show(display)
