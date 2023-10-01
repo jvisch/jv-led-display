@@ -10,12 +10,14 @@ class Display:
             raise ValueError('Row count must be greater or equal to 1')
         if nr_of_cols < 1:
             raise ValueError('Column count must be greater than 2')
-        self.__nr_of_rows = nr_of_rows
-        self.__nr_of_cols = nr_of_cols
         # Pixels
         if len(color) != 3:
             raise ValueError('Color must contain exactly 3 values (rgb)')
-        self.__pixels = tuple(Pixel(*color) for _ in range(self.count))
+        columns = []
+        for i in range(nr_of_cols):
+            column = [Pixel(*color) for _ in range(nr_of_rows)]
+            columns.append(tuple(column))
+        self._columns = tuple(columns)
 
     def __str__(self) -> str:
         rows_as_strings = ', '.join(map(str, self.rows))
@@ -23,38 +25,29 @@ class Display:
 
     @property
     def pixels(self):
-        return self.__pixels
+        for i,column in enumerate(self._columns):
+            if i % 2 == 1:
+                column = reversed(column)
+            for pixel in column:
+                yield pixel
 
     @property
     def count(self):
         return self.row_count * self.column_count
 
-    def index(self, x, y):
-        # just like a python list indexer
-        if x < 0:
-            x = self.column_count + x
-        if x >= self.column_count:
-            raise IndexError(f'x out of range)')
-        if y < 0:
-            y = self.row_count + y
-        if y >= self.row_count:
-            raise IndexError(f'y out of range)')
-        # calculate index in the pixels array
-        return (y * self.row_count) + x
-
     def __getitem__(self, index):
-        array_index = self.index(*index)
-        return self.pixels[array_index]
+        x, y = index
+        return self._columns[x][y]
 
     def __setitem__(self, index, pixel):
-        array_index = self.index(*index)
-        self.pixels[array_index] << pixel
+        x, y = index
+        self._columns[x][y] << pixel
 
     def __len__(self):
         return self.count
     
     def __lshift__(self, value):
-        for p in self.__pixels:
+        for p in self.pixels:
             p << value
 
     def __bytes__(self):
@@ -62,26 +55,26 @@ class Display:
 
     @property
     def raw_bytes(self):
-        return (b for pixel in self.pixels for b in pixel)
+        return [b for pixel in self.pixels for b in pixel]
 
     @property
     def row_count(self):
-        return self.__nr_of_rows
+        return len(self._columns[0])
 
     @property
     def column_count(self):
-        return self.__nr_of_cols
+        return len(self._columns)
 
     @property
     def rows(self):
-        for row_index in range(self.row_count):
-            yield Row(row_index, self)
+        for r in range(self.row_count):
+            row = tuple(column[r] for column in self._columns)
+            yield DisplayPart(row)
 
     @property
     def columns(self):
-        for column_index in range(self.column_count):
-            yield Column(column_index, self)
-
+        for column in self._columns:
+            yield DisplayPart(column)
 
 class DisplayPart:
 
@@ -110,7 +103,7 @@ class DisplayPart:
         return self.count
 
     def __lshift__(self, value):
-        if isinstance(value, Pixel | int):
+        if isinstance(value, Pixel | int) or len(value) == 3:
             for p in self.pixels:
                 p << value
         else:
@@ -120,19 +113,19 @@ class DisplayPart:
                 self.pixels[i] << value[i]
 
 
-class Row(DisplayPart):
+# class Row(DisplayPart):
 
-    def __init__(self, row_index, display: Display):
-        start = display.index(0, row_index)
-        end = start + display.column_count
-        pixels = display.pixels[start: end]
-        super().__init__(pixels)
+#     def __init__(self, row_index, display: Display):
+#         start = display.index(0, row_index)
+#         end = start + display.column_count
+#         pixels = display.pixels[start: end]
+#         super().__init__(pixels)
 
 
-class Column(DisplayPart):
+# class Column(DisplayPart):
 
-    def __init__(self, column_index, display: Display):
-        start = column_index
-        step = display.column_count
-        pixels = display.pixels[start:: step]
-        super().__init__(pixels)
+#     def __init__(self, column_index, display: Display):
+#         start = column_index
+#         step = display.column_count
+#         pixels = display.pixels[start:: step]
+#         super().__init__(pixels)

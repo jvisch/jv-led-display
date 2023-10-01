@@ -30,24 +30,41 @@ class PixelDisplayFrame(tkinter.Frame):
         pixel_width = width / pixel_column_count
         pixel_height = width / pixel_row_count
 
-        rows = []
-        for r in range(pixel_row_count):
-            py1 = r * pixel_height
-            py2 = py1 + pixel_height
-            row = []
-            for column in range(pixel_column_count):
-                px1 = column * pixel_width
-                px2 = px1 + pixel_width
-                p = self.canvas.create_oval(px1, py1, px2, py2, fill=pixel_color, width=int(
-                    pixel_width*0.20), outline=background_color)
-                row.append(p)
-            rows.append(row)
+        # rows = []
+        # for r in range(pixel_row_count):
+        #     py1 = r * pixel_height
+        #     py2 = py1 + pixel_height
+        #     row = []
+        #     for column in range(pixel_column_count):
+        #         px1 = column * pixel_width
+        #         px2 = px1 + pixel_width
+        #         p = self.canvas.create_oval(px1, py1, px2, py2, fill=pixel_color, width=int(pixel_width*0.20), outline=background_color)
+        #         row.append(p)
+        #     rows.append(row)
+
+        # # display pixels as wired on fysical mtarix
+        # for row in rows[1::2]:
+        #     row.reverse()
+
+        # self.__pixels = [p for row in rows for p in row]
+
+        columns = []
+        for c in range(pixel_column_count):
+            px1 = c * pixel_width
+            px2 = px1 + pixel_width
+            column = []
+            for r in range(pixel_row_count):
+                py1 = r * pixel_height
+                py2 = py1 + pixel_height
+                p = self.canvas.create_oval(px1, py1, px2, py2, fill=pixel_color, width=int(pixel_width*0.20), outline=background_color)
+                column.append(p)
+            columns.append(column)
 
         # display pixels as wired on fysical mtarix
-        for row in rows[1::2]:
-            row.reverse()
+        for column in columns[1::2]:
+            column.reverse()
 
-        self.__pixels = [p for row in rows for p in row]
+        self.__pixels = [p for column in columns for p in column]
 
         # Create socket to receive pixel data
         self.after(1000, self.__handle_incomming_data)
