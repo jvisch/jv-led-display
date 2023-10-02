@@ -1,57 +1,51 @@
 
+
 class Pixel:
 
-    def __init__(self, *args) -> None:
-        if len(args) == 1:
-            self << args[0]
-        else:
-            self << args
+    def __init__(self, color) -> None:
+        self << color
 
     def __str__(self) -> str:
-        return self.__rgb.hex()
+        return '0x{r:0{2}}{g:0{2}}{b:0{2}}'
 
     def __len__(self):
         return 3
 
     def __iter__(self):
-        return iter(self.__rgb)
-    
-    def __getitem__(self, index):
-        if index < 0 or index >= len(self):
-            raise IndexError('rgb index out of range')
-        return self.__rgb[index]
+        yield self.r
+        yield self.g
+        yield self.b
+
+    # def __getitem__(self, index):
+    #     if index < 0 or index >= len(self):
+    #         raise IndexError('rgb index out of range')
+    #     return self.__rgb[index]
 
     @property
-    def red(self):
-        return self[0]
+    def r(self):
+        return self._r
 
-    @red.setter
-    def red(self, value):
-        self[0] = value
-
-    @property
-    def green(self):
-        return self[1]
-
-    @green.setter
-    def green(self, value):
-        self[1] = value
+    @r.setter
+    def r(self, value):
+        self._r = value
 
     @property
-    def blue(self):
-        return self[2]
+    def g(self):
+        return self._g
 
-    @blue.setter
-    def blue(self, value):
-        self[2] = value
+    @g.setter
+    def g(self, value):
+        self._g = value
+
+    @property
+    def b(self):
+        return self._b
+
+    @b.setter
+    def b(self, value):
+        self._b = value
 
     def __lshift__(self, color):
-        # check input
-        if isinstance(color, int):
-            rgb = bytearray(color.to_bytes(3))
-        else:
-            rgb = bytearray(color)
-        # check bytearray length
-        if len(rgb) != len(self):
-            raise ValueError('Invalid argument')
-        self.__rgb = rgb
+        self._b = (color & 0xFF)
+        self._g = (color >> 8) & 0xFF
+        self._r = (color >> 16) & 0xFF

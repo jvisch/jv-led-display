@@ -5,7 +5,7 @@ import socket
 from .emulator import run as emulator_run
 from .display import display
 
-SLEEPY = .015
+SLEEPY = .030
 BAUDRATE = 115200
 
 class led_matrix():

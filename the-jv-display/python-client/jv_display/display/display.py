@@ -1,9 +1,9 @@
 from .pixel import Pixel
-
+from .color import Color
 
 class Display:
 
-    def __init__(self, dimension=(16, 16), color=(0, 0, 0)) -> None:
+    def __init__(self, dimension=(16, 16), color=Color.HotPink) -> None:
         # dimension
         nr_of_rows, nr_of_cols = dimension
         if nr_of_rows < 1:
@@ -11,11 +11,9 @@ class Display:
         if nr_of_cols < 1:
             raise ValueError('Column count must be greater than 2')
         # Pixels
-        if len(color) != 3:
-            raise ValueError('Color must contain exactly 3 values (rgb)')
         columns = []
         for i in range(nr_of_cols):
-            column = [Pixel(*color) for _ in range(nr_of_rows)]
+            column = [Pixel(color) for _ in range(nr_of_rows)]
             columns.append(tuple(column))
         self._columns = tuple(columns)
 

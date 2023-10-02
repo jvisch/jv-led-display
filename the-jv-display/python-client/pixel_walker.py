@@ -1,54 +1,46 @@
 import jv_display.ledmatrix
-from jv_display.display.display import Display, Pixel
+from jv_display.display.display import Display, Pixel, Color
 import time
 
 COM_PORT = 'com3'
 DEBUG_HOST = 'localhost'
 DEBUG_PORT = 44444
 
-BLACK = [0x00, 0x00, 0x00]
-RED = [0xFF, 0x00, 0x00]
-GREEN = [0x00, 0xFF, 0x00]
-BLEU = [0x00, 0x00, 0xFF]
-
-YELLOW = [0xFF, 0xFF, 0x00]
-PURPLE = [0x00, 0xFF, 0xFF]
-
 matrix = jv_display.ledmatrix.led_matrix(
-    com_port= COM_PORT, 
+    # com_port= COM_PORT, 
     debug_connection=(DEBUG_HOST, DEBUG_PORT)
     )
 display = Display()
 
 while True:
-    display << PURPLE
+    display << Color.Purple
     matrix.show(display)
     time.sleep(1)
 
-    display[0,0] << RED
-    display[1,1] << GREEN
+    display[0,0] << Color.Red
+    display[1,1] << Color.Green
 
     matrix.show(display)
     time.sleep(2)
 
 
 
-    display << RED
+    display << Color.Red
     matrix.show(display)
 
     time.sleep(1)
 
     columns = display.columns
     c = next(columns)
-    c << GREEN
+    c << Color.Green
     matrix.show(display)
 
     c = next(columns)
-    c << GREEN
+    c << Color.Green
     matrix.show(display)
 
     c = next(columns)
-    c << GREEN
+    c << Color.Green
     matrix.show(display)
 
     # time.sleep(1)
@@ -56,23 +48,23 @@ while True:
     rows = display.rows
 
     r = next(rows)
-    r << YELLOW
+    r << Color.Yellow
     matrix.show(display)
 
     r = next(rows)
-    r << YELLOW
+    r << Color.Yellow
     matrix.show(display)
 
     time.sleep(1)
 
     for r in list(display.rows)[::2]:
-        r << PURPLE
+        r << Color.Purple
     matrix.show(display)
     time.sleep(1)
 
-    display[0,0] = (255,   0,   0)
-    display[1,0] = (  0, 255,   0)
-    display[0,1] = (  0,   0, 255)
+    display[0,0] = Color.Red
+    display[1,0] = Color.Green
+    display[0,1] = Color.Blue
 
     matrix.show(display)
     time.sleep(3)
