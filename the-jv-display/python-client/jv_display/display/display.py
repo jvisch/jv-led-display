@@ -3,7 +3,7 @@ from .color import Color
 
 class Display:
 
-    def __init__(self, dimension=(16, 16), color=Color.HotPink) -> None:
+    def __init__(self, dimension, color) -> None:
         # dimension
         nr_of_rows, nr_of_cols = dimension
         if nr_of_rows < 1:
