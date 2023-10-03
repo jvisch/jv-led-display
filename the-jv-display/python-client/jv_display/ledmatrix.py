@@ -25,7 +25,7 @@ class led_matrix():
         self.socket = None
         if debug_connection:
             host, port = debug_connection
-            emulator_run.run(host, port)
+            emulator_run.run(host, port, pixel_color=color)
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.connect(debug_connection)
         # give ports time to initialize. Value experimental determined
