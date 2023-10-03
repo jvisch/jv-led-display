@@ -6,7 +6,7 @@ class Pixel:
         self << color
 
     def __str__(self) -> str:
-        return '0x{r:0{2}}{g:0{2}}{b:0{2}}'
+        return f'0x{self.r:0{2}X}{self.g:0{2}X}{self.b:0{2}X}'
 
     def __len__(self):
         return 3
