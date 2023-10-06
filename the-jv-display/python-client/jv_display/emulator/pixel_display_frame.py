@@ -5,9 +5,14 @@ import socket
 class PixelDisplayFrame(tkinter.Frame):
 
     def __init__(self, *args, **kwargs):
+        def hex_color(value):
+            if isinstance(value, int):
+                return f'#{value:0{6}X}'
+            else:
+                return value
         # Display settings
-        pixel_color = kwargs.pop('pixel_color', '#666666')
-        background_color = kwargs.pop('display_color', '#000000')
+        pixel_color = hex_color(kwargs.pop('pixel_color', '#666666'))
+        background_color = hex_color(kwargs.pop('display_color', '#000000'))
         pixel_row_count, pixel_column_count = kwargs.pop('dimension', (16, 16))
         self.host = kwargs.pop('host', 'localhost')
         self.port = kwargs.pop('port', 65432)
