@@ -139,3 +139,7 @@ class Color:
     WhiteSmoke = 0xf5f5f5
     Yellow = 0xffff00
     YellowGreen = 0x9acd32
+
+def rgb_to_hex(r, g, b):
+    return (r << 16) + (g << 8) + b
+
