@@ -5,8 +5,9 @@ import socket
 from .emulator import run as emulator_run
 from .display import display
 from .display.color import Color
+import threading
 
-SLEEPY = .030
+SLEEPY = .015
 BAUDRATE = 115200
 
 
@@ -32,16 +33,23 @@ class led_matrix():
         time.sleep(2.1)
         self._display = display.Display(dimension, color)
 
+        self.t = None
+
     def show(self):
-        byte_data = bytes(self._display)
-        # Arduino matrix
-        if self.serial_port:
-            self.serial_port.write(byte_data)
-        # TKinter form
-        if self.socket:
-            self.socket.sendall(byte_data)
-        # Let system process the data
-        time.sleep(SLEEPY)
+        def worker():
+            byte_data = bytes(self._display)
+            # Arduino matrix
+            if self.serial_port:
+                self.serial_port.write(byte_data)
+            # TKinter form
+            if self.socket:
+                self.socket.sendall(byte_data)
+            # Let system process the data
+            time.sleep(SLEEPY)
+        if self.t:
+            self.t.join()
+        self.t = threading.Thread(target=worker)
+        self.t.start()
 
     def close(self):
         if self.serial_port:
