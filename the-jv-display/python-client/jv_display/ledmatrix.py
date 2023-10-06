@@ -36,6 +36,7 @@ class led_matrix():
         self.t = None
 
     def show(self):
+        # worker thread
         def worker():
             byte_data = bytes(self._display)
             # Arduino matrix
@@ -46,8 +47,11 @@ class led_matrix():
                 self.socket.sendall(byte_data)
             # Let system process the data
             time.sleep(SLEEPY)
+
+        # check if updating finished
         if self.t:
             self.t.join()
+        # Let main thread continue
         self.t = threading.Thread(target=worker)
         self.t.start()
 
