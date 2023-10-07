@@ -70,7 +70,7 @@ void imageLoadDefault()
   // TODO: implement command 'loadDefault'
   for (auto &led : imageLeds)
   {
-    led = CRGB::HotPink;
+    led = CRGB::SteelBlue;
   }
 }
 
