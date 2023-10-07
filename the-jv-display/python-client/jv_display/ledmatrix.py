@@ -13,7 +13,7 @@ BAUDRATE = 115200
 
 class led_matrix():
 
-    def __init__(self, com_port=None, debug_connection=None, dimension=(16, 16), color=Color.HotPink) -> None:
+    def __init__(self, com_port=None, debug_connection=None, dimension=(16, 16), color=Color.SteelBlue) -> None:
         if com_port is None and debug_connection is None:
             raise ValueError(
                 "Either 'com_port' of 'debug_connecton' must be set.")
