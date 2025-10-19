@@ -1,6 +1,8 @@
 import machine
 import neopixel
 
+from .color import *
+
 
 class Display:
 
@@ -57,13 +59,15 @@ class Display:
 
     def __getitem__(self, index):
         from .pixel import Pixel
-        p = Pixel(self, index)
+        p = Pixel(self._display, index)
         return p
 
-    def fill(self, color):
-        self._display.fill(color)
+    def fill(self, value: Color):
+        if not isinstance(value, RGB):
+            value = value.to_rgb()
+        self._display.fill(value.as_tuple())
         self.show()
 
     def reset(self):
-        color = (0, 0, 0)
-        self.fill(color)
+        value = RGB(0, 0, 0)
+        self.fill(value)
