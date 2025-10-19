@@ -1,6 +1,6 @@
 class Pixel:
-    def __init__(self, display, index) :
-        self.__display = display
+    def __init__(self, parent, index) :
+        self.__display = parent
         self.__index = index
 
     @property
