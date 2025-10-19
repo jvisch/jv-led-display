@@ -4,7 +4,7 @@ import neopixel
 
 class Display:
 
-    def __init__(self, row_count: int, column_count: int, pin: machine.Pin) -> None:
+    def __init__(self, row_count, column_count, pin) :
         """
         Initializes the matrix
         :param row_count: number of rows
@@ -17,7 +17,7 @@ class Display:
         self._display = neopixel.NeoPixel(pin, n)
 
     @staticmethod
-    def __create_indexes(row_count: int, column_count: int) -> tuple[tuple[int, ...], ...]:
+    def __create_indexes(row_count, column_count):
         columns = []
         for c in range(column_count):
             if c % 2 == 0:
