@@ -7,17 +7,15 @@ class Part:
         return len(self.__indexes)
 
     def __getitem__(self, item):
+        from .pixel import Pixel
         real_index = self.__indexes[item]
-        pixel_color = self.__matrix[real_index]
-        return pixel_color
-
-    def __setitem__(self, key, value):
-        real_index = self.__indexes[key]
-        self.__matrix[real_index] = value
+        p = Pixel(self.__matrix, real_index)
+        return p
 
     def __str__(self):
         return str(self.__indexes)
 
     def __iter__(self):
+        from .pixel import Pixel
         for i in self.__indexes:
             yield Pixel(self.__matrix, i)

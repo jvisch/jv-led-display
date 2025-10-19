@@ -1,8 +1,6 @@
 import machine
 import neopixel
 
-from .part import Part
-
 
 class Display:
 
@@ -49,10 +47,12 @@ class Display:
         self._display.write()
 
     def column(self, index):
+        from .part import Part
         return Part(self, self.__columns[index])
 
     def row(self, index):
         row = (column[index] for column in self.__columns)
+        from .part import Part
         return Part(self, row)
 
     def __setitem__(self, key, value):
@@ -60,3 +60,11 @@ class Display:
 
     def __getitem__(self, item):
         return self._display[item]
+
+    def fill(self, color):
+        self._display.fill(color)
+        self.show()
+
+    def reset(self):
+        color = (0, 0, 0)
+        self.fill(color)

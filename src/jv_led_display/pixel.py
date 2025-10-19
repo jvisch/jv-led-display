@@ -1,9 +1,8 @@
 from .display import Display
 
-
 class Pixel:
-    def __init__(self, display: Display, index: int) -> None:
-        self.__display = display
+    def __init__(self, parent: Display, index: int) -> None:
+        self.__display = parent
         self.__index = index
 
     @property
