@@ -1,3 +1,3 @@
-# jv-led-matrix
+# jv-led-displayArduino Uno
 
-led matrix using Arduino Uno and WS2812B 16x16 Led Matrix.
+Led Display using Raspberry Pi Pico 2W and WS2812B 16x16 Led Matrix.
