@@ -4,7 +4,7 @@ import neopixel
 
 class Display:
 
-    def __init__(self, row_count, column_count, pin) :
+    def __init__(self, row_count, column_count, pin: machine.Pin):
         """
         Initializes the matrix
         :param row_count: number of rows
@@ -48,18 +48,17 @@ class Display:
 
     def column(self, index):
         from .part import Part
-        return Part(self, self.__columns[index])
+        return Part(self._display, self.__columns[index])
 
     def row(self, index):
         row = (column[index] for column in self.__columns)
         from .part import Part
-        return Part(self, row)
+        return Part(self._display, row)
 
-    def __setitem__(self, key, value):
-        self._display[key] = value
-
-    def __getitem__(self, item):
-        return self._display[item]
+    def __getitem__(self, index):
+        from .pixel import Pixel
+        p = Pixel(self, index)
+        return p
 
     def fill(self, color):
         self._display.fill(color)
