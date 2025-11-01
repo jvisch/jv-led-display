@@ -8,6 +8,9 @@ class Pixel:
         self.__display = display
         self.__index = index
 
+    def __lshift__(self, new_color):
+        self.color = new_color
+
     @property
     def color(self) -> RGB:
         color = RGB(*self.__display[self.__index])

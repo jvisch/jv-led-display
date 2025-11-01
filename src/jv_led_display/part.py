@@ -22,3 +22,7 @@ class Part:
         from .pixel import Pixel
         for i in self.__indexes:
             yield Pixel(self.__display, i)
+
+    def __lshift__(self, new_color):
+        for p in self:
+            p << new_color

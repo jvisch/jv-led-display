@@ -6,21 +6,16 @@ import jv_led_display
 p = machine.Pin(0)
 m = jv_led_display.Display(16, 16, p)
 
-r = m.row(2)
-for p in r:
-    p.color = jv_led_display.RGB(10, 0, 0)
+p = m.pixel(3, 3)
 
-m.show()
-time.sleep(1)
-
-c = m.column(4)
-for p in c:
-    p.color = jv_led_display.RGB(9, 0, 0)
+p << jv_led_display.RGB(10, 0, 3)
 
 m.show()
 
 time.sleep(1)
-m.reset()
 
-m.fill(jv_led_display.RGB(4, 4, 9))
-m.show()
+c = m.column(2)
+c << jv_led_display.RGB(0, 10, 0)
+
+r = m.row(11)
+r << jv_led_display.RGB(0, 0, 22)

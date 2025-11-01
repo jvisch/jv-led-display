@@ -48,6 +48,11 @@ class Display:
         """
         self._display.write()
 
+    def pixel(self, column, row):
+        from .pixel import Pixel
+        pixel_index = self.__columns[column][row]
+        return Pixel(self._display, pixel_index)
+
     def column(self, index):
         from .part import Part
         return Part(self._display, self.__columns[index])
@@ -61,6 +66,9 @@ class Display:
         from .pixel import Pixel
         p = Pixel(self._display, index)
         return p
+
+    def __lshift__(self, new_color):
+        self.fill(new_color)
 
     def fill(self, value: Color):
         if not isinstance(value, RGB):
