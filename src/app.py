@@ -4,18 +4,23 @@ import time
 import jv_led_display
 
 p = machine.Pin(0)
-m = jv_led_display.Display(16, 16, p)
+display = jv_led_display.Display(16, 16, p)
+display.reset()
 
-p = m.pixel(3, 3)
+color = jv_led_display.RGB(0, 255, 0).to_hsv()
 
-p << jv_led_display.RGB(10, 0, 3)
+display << color
 
-m.show()
+time.sleep(2)
+display.reset()
 
-time.sleep(1)
+column = display.column(2)
+column << jv_led_display.RGB(0, 10, 0)
+display.show()
 
-c = m.column(2)
-c << jv_led_display.RGB(0, 10, 0)
+time.sleep(2)
 
-r = m.row(11)
-r << jv_led_display.RGB(0, 0, 22)
+row = display.row(11)
+row << jv_led_display.RGB(0, 0, 22)
+display.show()
+
