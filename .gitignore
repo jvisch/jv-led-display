@@ -1,5 +1,81 @@
-*.asta.lock
-.vscode/
-build/
-venv/
+# In dit bestand staat gespecificeerd
+# welke bestanden en mappen niet naar de
+# Git-repository moeten worden gecommit.
+#
+# Het gaat om bestanden die een tijdelijk
+# karakter hebben of op elke computer
+# anders zijn of gegenereerd worden.
+
+# env bestanden
+.env
+.envrc
+
+# Python
 __pycache__/
+.mypy_cache/
+*.pyc
+
+# Environments
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+
+# PyCharm
+.idea/
+
+# Visual Studio Code
+.vscode/
+.devcontainer/
+.micropico
+
+# Tijdelijke files van Office
+**/~$*
+*.tmp
+
+# Tijdelijke bestanden van macOS
+**/.DS_Store
+**/.DS_Store?
+**/._*
+**/.Spotlight-V100
+**/.Trashes
+
+# Windows bestanden
+**/Thumbs.db
+**/Thumbs.db:encryptable
+**/ehthumbs.db
+**/ehthumbs_vista.db
+**/*.tmp
+**/*.temp
+**/Desktop.ini
+**/$RECYCLE.BIN/
+**/*.lnk
+
+# Log bestanden
+*.log
+
+# Build en distributie bestanden
+build/
+dist/
+**/*.spec
+/.project
+/.pydevproject
+
+# asta lock file
+*.asta.lock
+
+# compressed files
+*.zip
+*.rar
+*.gz
+
+# java binaries
+*.jar
