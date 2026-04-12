@@ -62,10 +62,14 @@ class Display:
         from .part import Part
         return Part(self._display, row)
 
-    def __getitem__(self, index):
-        from .pixel import Pixel
-        p = Pixel(self._display, index)
-        return p
+    def __getitem__(self, index: tuple[int, int]):
+        column, row = index
+        return self.pixel(column, row)
+
+    def __iter__(self):
+        for column in range(self.column_count()):
+            for row in range(self.row_count()):
+                yield self.pixel(column, row)
 
     def __lshift__(self, new_color):
         self.fill(new_color)
