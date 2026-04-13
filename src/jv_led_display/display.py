@@ -75,9 +75,13 @@ class Display:
         self.fill(new_color)
 
     def fill(self, value: Color):
-        if not isinstance(value, RGB):
-            value = value.to_rgb()
-        self._display.fill(value.as_tuple())
+        # if not isinstance(value, RGB):
+        #     value = value.to_rgb()
+        # self._display.fill(value.as_tuple())
+        # TODO: gebruik hier de fill van neopixel, maar
+        #  dan met de juiste gamma-correctie
+        for p in self:
+            p.color = value
         self.show()
 
     def reset(self):

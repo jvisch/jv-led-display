@@ -27,10 +27,6 @@ class Pixel:
             value = value.to_rgb()
         r, g, b = value.as_tuple()
         css_value = _css_rgb(r, g, b)
-        print(value)
-        print(value.to_rgb())
-        print(r, b, g)
-        print(css_value)
         self.__display[self.__index] = css_value
 
     def __str__(self):
