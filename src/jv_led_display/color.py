@@ -1,10 +1,10 @@
 class Color:
 
     def to_rgb(self):
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def to_hsv(self):
-        raise NotImplemented()
+        raise NotImplementedError()
 
 
 class RGB(Color):
