@@ -1,52 +1,14 @@
-from typing import Tuple
+from typing import Tuple, TypeAlias, Any
+import threading
+import tkinter
+import os
+import signal 
 
+import PixelDisplayFrame
 
-class _NeoPixelBase:
-    """
-    a class to add a few missing methods to the NeoPixel class
-    """
+Incomplete: TypeAlias = Any  # stable
 
-    def __len__(self) -> int:
-        """
-        Returns the number of LEDs in the strip.
-        """
-        ...
-
-    def __setitem__(self, index: int, val, /) -> None:
-        """
-        Set the pixel at *index* to the value, which is an RGB/RGBW tuple.
-        """
-        ...
-
-    def __getitem__(self, index: int, /) -> Tuple:
-        """
-        Returns the pixel at *index* as an RGB/RGBW tuple.
-        """
-        ...
-
-
-class NeoPixel(_NeoPixelBase):
-    """
-    This class stores pixel data for a WS2812 LED strip connected to a pin. The
-    application should set pixel data and then call :meth:`NeoPixel.write`
-    when it is ready to update the strip.
-
-    For example::
-
-        import neopixel
-
-        # 32 LED strip connected to X8.
-        p = machine.Pin.board.X8
-        n = neopixel.NeoPixel(p, 32)
-
-        # Draw a red gradient.
-        for i in range(32):
-            n[i] = (i * 8, 0, 0)
-
-        # Update the strip.
-        n.write()
-    """
-
+class NeoPixel():
     ORDER: Incomplete
     pin: Incomplete
     n: Incomplete
@@ -55,15 +17,32 @@ class NeoPixel(_NeoPixelBase):
     timing: Incomplete
 
     def __init__(self, pin, n, bpp: int = 3, timing: int = 1) -> None:
-        """
-        Construct an NeoPixel object.  The parameters are:
+        _, _, _,_ = pin, n, bpp, timing
 
-            - *pin* is a machine.Pin instance.
-            - *n* is the number of LEDs in the strip.
-            - *bpp* is 3 for RGB LEDs, and 4 for RGBW LEDs.
-            - *timing* is 0 for 400KHz, and 1 for 800kHz LEDs (most are 800kHz).
-        """
-        ...
+        # The form will be started on a seperate thread
+        self.form = None
+        ready = threading.Event()
+        def __start_form(np:NeoPixel):
+            # create and initialize form
+            root = tkinter.Tk()
+            np.form = PixelDisplayFrame.PixelDisplayFrame(root)
+            np.form.pack(side="top", fill="both", expand=True)
+
+            # kill the whole process if the form is closed
+            def on_close():
+                os.kill(os.getpid(), signal.SIGTERM)
+            root.protocol("WM_DELETE_WINDOW", on_close)
+            
+            # signal form initialized
+            ready.set()
+            # run user interface
+            root.mainloop()
+
+        self.display_thread = threading.Thread(target=__start_form, args=(self,))
+        self.display_thread.start()
+        
+        # wait for form thread to finish initialization
+        ready.wait()
 
     def __len__(self) -> int:
         """
@@ -94,4 +73,4 @@ class NeoPixel(_NeoPixelBase):
         """
         Writes the current pixel data to the strip.
         """
-        ...
+        self.form.write(list(range(10)))
