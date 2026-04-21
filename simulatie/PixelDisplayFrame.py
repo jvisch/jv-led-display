@@ -70,15 +70,10 @@ class PixelDisplayFrame(tkinter.Frame):
         self.__pixels = [p for column in columns for p in column]
 
     def write(self, data):
-        assert False
-
         def rgb(r, g, b):
             return f'#{r:02x}{g:02x}{b:02x}'
-        bytes_data = bytes(data)
-        for i in range(0, len(bytes_data), 3):
-            bd = bytes_data[i:i+3]
-            if len(bd) == 3:
-                r, g, b = bytes_data[i:i+3]
-                color = rgb(r, g, b)
-                pixel = self.__pixels[i//3]
-                self.canvas.itemconfig(pixel, fill=color)
+        assert len(data) == (16*16)
+        for i, (r, g, b) in enumerate(data):
+            color = rgb(r, g, b)
+            pixel = self.__pixels[i]
+            self.canvas.itemconfig(pixel, fill=color)
