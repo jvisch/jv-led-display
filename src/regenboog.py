@@ -1,5 +1,4 @@
 import machine
-import time
 
 import jv_led_display
 
