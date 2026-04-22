@@ -73,7 +73,8 @@ class PixelDisplayFrame(tkinter.Frame):
         def rgb(r, g, b):
             return f'#{r:02x}{g:02x}{b:02x}'
         assert len(data) == (16*16)
+        c = self.canvas
         for i, (r, g, b) in enumerate(data):
             color = rgb(r, g, b)
             pixel = self.__pixels[i]
-            self.canvas.itemconfig(pixel, fill=color)
+            c.itemconfig(pixel, fill=color)
