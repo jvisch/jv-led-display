@@ -13,8 +13,12 @@ Incomplete: TypeAlias = Any  # stable
 class NeoPixel():
 
     def __init__(self, pin, n, bpp: int = 3, timing: int = 1) -> None:
-        _, _, _, _ = pin, n, bpp, timing
+        _, _, _ = pin, n, timing
 
+        if bpp != 3:
+            raise ValueError(
+                "Unsupported bpp value: only RGB strips with bpp == 3 are supported"
+            )
         assert n == (16*16), "Alleen displays van 16x16 worden ondersteund"
         self.led_strip = [(0, 0, 0)] * n
 
