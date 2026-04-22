@@ -22,7 +22,7 @@ class NeoPixel():
         assert n == (16*16), "Alleen displays van 16x16 worden ondersteund"
         self.led_strip = [(0, 0, 0)] * n
 
-        # The form will be started on a seperate thread
+        # The form will be started on a separate thread
         self.form = None
         ready = threading.Event()
 
