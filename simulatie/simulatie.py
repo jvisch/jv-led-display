@@ -10,3 +10,19 @@ if str(SRC_PATH) not in sys.path:
 # ----------------------------------------------
 
 import sterrenhemel
+
+
+def _run_effect():
+    for entrypoint_name in ("starfield", "main"):
+        entrypoint = getattr(sterrenhemel, entrypoint_name, None)
+        if callable(entrypoint):
+            entrypoint()
+            return
+
+    raise AttributeError(
+        "Module 'sterrenhemel' must expose an explicit callable entrypoint "
+        "such as 'starfield()' or 'main()' instead of relying on import side effects."
+    )
+
+
+_run_effect()
