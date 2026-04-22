@@ -68,3 +68,9 @@ def _inv_css_rgb(r, g, b):
     g = _clamp8(round(_inv_gamma8(g) / BRIGHTNESS))
     b = _clamp8(round(_inv_gamma8(b) / BRIGHTNESS))
     return r, g, b
+
+
+def from_corrected_rgb(r, g, b):
+    """Convert a brightness- and gamma-corrected NeoPixel tuple back to the
+    original linear CSS RGB values (0-255)."""
+    return _inv_css_rgb(r, g, b)

@@ -77,6 +77,6 @@ class NeoPixel():
         """
         # For the simulation there is no gamma and lineair
         # correction neccesary, invert it back.
-        cf = jv_led_display.pixel._inv_css_rgb
+        cf = jv_led_display.from_corrected_rgb
         colors = [cf(r, g, b) for r, g, b in self.led_strip]
         self.form.write_threadsafe(colors)
