@@ -1,4 +1,5 @@
 import tkinter
+import queue
 
 
 class PixelDisplayFrame(tkinter.Frame):
@@ -13,6 +14,8 @@ class PixelDisplayFrame(tkinter.Frame):
         pixel_color = hex_color(kwargs.pop('pixel_color', '#666666'))
         background_color = hex_color(kwargs.pop('display_color', '#000000'))
         pixel_row_count, pixel_column_count = kwargs.pop('dimension', (16, 16))
+        queue_poll_ms = int(kwargs.pop('queue_poll_ms', 10))
+        queue_poll_ms = 1000 //30 # 30fps
         # base init
         tkinter.Frame.__init__(self, *args, **kwargs)
 
@@ -68,13 +71,43 @@ class PixelDisplayFrame(tkinter.Frame):
             column.reverse()
 
         self.__pixels = [p for column in columns for p in column]
+        self.__pixel_count = pixel_row_count * pixel_column_count
+        self.__frame_queue = queue.Queue(maxsize=1)
+        self.__queue_poll_ms = queue_poll_ms
+        self.after(self.__queue_poll_ms, self.__drain_frame_queue)
 
-    def write(self, data):
+    def __write(self, data):
         def rgb(r, g, b):
             return f'#{r:02x}{g:02x}{b:02x}'
-        assert len(data) == (16*16)
+        assert len(data) == self.__pixel_count
         c = self.canvas
         for i, (r, g, b) in enumerate(data):
             color = rgb(r, g, b)
             pixel = self.__pixels[i]
             c.itemconfig(pixel, fill=color)
+
+    def write_threadsafe(self, data):
+        frame = tuple(data)
+        try:
+            self.__frame_queue.put_nowait(frame)
+        except queue.Full:
+            try:
+                self.__frame_queue.get_nowait()
+            except queue.Empty:
+                pass
+            self.__frame_queue.put_nowait(frame)
+
+    def __drain_frame_queue(self):
+        latest_frame = None
+
+        while True:
+            try:
+                latest_frame = self.__frame_queue.get_nowait()
+            except queue.Empty:
+                break
+
+        if latest_frame is not None:
+            self.__write(latest_frame)
+
+        if self.winfo_exists():
+            self.after(self.__queue_poll_ms, self.__drain_frame_queue)

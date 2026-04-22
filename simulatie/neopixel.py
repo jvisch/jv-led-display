@@ -72,4 +72,4 @@ class NeoPixel():
         # correction neccesary, invert it back.
         cf = jv_led_display.pixel._inv_css_rgb
         colors = [cf(r,g,b) for r,g,b in self.led_strip]
-        self.form.write(colors)
+        self.form.write_threadsafe(colors)
