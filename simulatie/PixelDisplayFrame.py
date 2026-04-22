@@ -14,8 +14,7 @@ class PixelDisplayFrame(tkinter.Frame):
         pixel_color = hex_color(kwargs.pop('pixel_color', '#666666'))
         background_color = hex_color(kwargs.pop('display_color', '#000000'))
         pixel_row_count, pixel_column_count = kwargs.pop('dimension', (16, 16))
-        queue_poll_ms = int(kwargs.pop('queue_poll_ms', 10))
-        queue_poll_ms = 1000 //30 # 30fps
+        queue_poll_ms = int(kwargs.pop('queue_poll_ms', 1000 // 30))  # 30fps default
         # base init
         tkinter.Frame.__init__(self, *args, **kwargs)
 
